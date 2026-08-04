@@ -32,4 +32,4 @@ print("`var` is now a number", var)  #Python is dynamically typed
 # -------------------------------------------------------------------------------------------------
 
 # datatype
-print(type(var)) #becomes int, at line #29, it was str.
+print(type(var)) #becomes int, at line #29, it was str
