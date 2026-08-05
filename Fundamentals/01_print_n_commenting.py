@@ -25,11 +25,29 @@ more convenience.'''
 # -------------------------------------------------------------------------------------------------
 
 # Variables in Python
+
+# Rules for variables: can include alphabets, numbers (not at the start), and _; should not be a keyword like for, switch, and, etc.
+# Also, variables are strictly case-sensitive. age, Age, and AGE are all different variables.
 var = "I am a string"
 print(var)
 var = 17
-print("`var` is now a number", var)  #Python is dynamically typed
+print("`var` is now a number", var)  
+
 # -------------------------------------------------------------------------------------------------
 
-# datatype
+# datatype of a variable
+
 print(type(var)) #becomes int, at line #29, it was str
+
+# Python is dynamically typed:~
+# =============================
+'''Variables are not bound to a fixed data type. 
+   A variable can be reassigned to values of different types during program execution. 
+   The type belongs to the object (value), not to the variable, i.e. it is determined by the type of the object it currently refers to.'''
+
+# -------------------------------------------------------------------------------------------------
+print(1+"2") #TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+# Python is Strongly typed :~
+# ===========================
+# Will not automatically or implicitly convert incompatible data types during an operation.
