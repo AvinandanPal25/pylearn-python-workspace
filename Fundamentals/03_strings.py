@@ -10,7 +10,8 @@ print(name)
 print('''He said, "It's not so difficult to learn Python. 
 In fact it's quite Easy".''') 
 
-# length & Indexing a string
+# length & Indexing a string:
+#===============================
 lang="Python"
 print(len(lang))
 
@@ -18,7 +19,6 @@ print(lang[0], lang[2], lang[5])
 # print(lang[18]) #-----> ERROR: string index out of Range
 print(lang[-1], lang[-4]) #Negative indexing: pos_index-len()
 
-#-----------------------------------------------------------------------
 # Methods on Strings:
 #=======================
 
