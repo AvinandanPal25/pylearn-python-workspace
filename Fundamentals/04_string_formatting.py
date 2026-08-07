@@ -2,12 +2,14 @@
 
 w1 = "DO"
 w2 = "BE"
-print("To {0} is to {1}".format(w1, w2))
+print("To {} is to {}".format(w1, w2))
+
+print("To {0} is to {1}".format(w1, w2)) #same
 print("To {1} is to {0}".format(w1, w2))
 print("Scooby Dooby Do!\n----------")
 
 
-#since Py 3.6
+#since Python  v3.6
 
 name = "Steyn"
 country = "South Africa"
