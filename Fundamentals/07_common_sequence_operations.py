@@ -55,7 +55,7 @@ print([1,2] == (1,2))
 print([1,2] == [2,1]) #Order matters in sequence type data
 print((8,) == (8)) #see the COMMA matters in tuples
 
-# 9. Sequential Traversal: 
+# 9. Iteration/ Sequential Traversal: 
         ## the same order that the sequential data was defined, is maintain throughout, until explicitly changed.
 
 for char in string:
