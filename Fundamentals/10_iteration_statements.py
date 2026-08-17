@@ -132,3 +132,4 @@ for color in colors:
         if f"{color}-{size}" == "Blue-S": 
             print("---Broken the whole color---")
             break
+
