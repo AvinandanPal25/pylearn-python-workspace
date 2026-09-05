@@ -16,7 +16,7 @@ print(uppercased_names)
 #-------------------------------------------
 uppercased_names_2 = []
 for name in names:
-    uppercased_names_2.append(name.upper()) #Built in method of Str object -- can be used whereeve needed instead repeating the above code
+    uppercased_names_2.append(name.upper()) #Built in method of Str object -- can be used wherever needed instead repeating the above code
 
 print(uppercased_names_2)
 #-------------------------------------------
@@ -126,3 +126,100 @@ student_report_card("Akankha",83,75,97,99, gender="female", of_class = 'XII', ex
 obtained_marks = [93,95,87,83,91,79,92]
 std_details  = {"of_class" : 'X', "roll_no" : 1, "extra_curricular" : ["Plays Cricket", "Class Monitor", "Does NCC", "Knows Drawing"]}
 student_report_card("Adrit",*obtained_marks, gender="male", **std_details) #same result... way of passing the arguments is different.
+
+print("-"*30)
+
+#---------------------------------------------------------------------------------------
+
+# scopes of a variable
+
+salary_hike = 0.1
+
+def calculate_revised_salary(salary):
+    if salary:
+        if salary >= 50000:
+            global salary_hike
+        else: 
+            salary_hike = 0.2
+        performance_bonus = 5000
+        print("Performance bonus: {0}, Salry hike percentage: {1}".format(performance_bonus, salary_hike))
+        revised_salary = salary*(1+salary_hike) + performance_bonus 
+        return revised_salary
+        print("This line is not reached as return is encountered before.")
+    else: 
+        print("salary not passed.") #but when else block is active, this line is reached.
+
+print(f"Revised salary :- {calculate_revised_salary(75000)}")
+print(f"Revised salary :- {calculate_revised_salary(40000)}") #after this line, global value if updated to 0.2
+print(f"Revised salary :- {calculate_revised_salary(100000)}")
+print(f"Revised salary :- {calculate_revised_salary(None)}")
+# print(performance_bonus) #not available outside the function block, as it is local to the function
+
+print()
+
+def outer_func():
+    import time
+    current_time = time.ctime()
+    print(f"It's {current_time}")
+    def inner_func():
+        print(f"And now it's {current_time}") #the enclosing identifier is used.
+    
+    inner_func()
+
+outer_func()
+
+print()
+
+# List all identifiers stored in the built-ins module
+import builtins
+print(dir(builtins))
+print()
+
+
+#global & nonlocal
+
+user_input = "   JannikSinner@gmail.com"
+def transform_name():
+    global user_input
+    print(user_input)
+    user_input = user_input.strip()
+    email = user_input
+    name = email.split('@')[0]
+    print(name)
+    def format_email():
+        nonlocal email   #if this is commented out:-- UnboundLocalError: local variable 'email' referenced before assignment
+        email = email.lower()
+        print(email)
+
+    format_email()
+
+transform_name()
+
+
+print("-"*30)
+#-------------------------------------------------------------------
+
+def nested_funcs():
+    print("Start of the outer function")
+    from datetime import datetime
+    print(datetime.now().strftime('%Y-%b-%d %H:%M:%S'))
+
+    def nested_func_1():
+        print("I am inside the first nested function")
+        PI = 3.14
+        print(f"Value of PI is {PI}")
+        def nested_func_2(radius):
+            area_of_circle = PI*radius*radius
+            return area_of_circle
+        
+        radius = 5
+        area = nested_func_2(radius)
+        print(f"Area of a circle with rad:{radius}cm is = {area}sqcm.")
+        return f"{PI=}"
+    
+    returned_val = nested_func_1()
+    print("Back to the Outer function. The inner functions has returned a value - ", returned_val)
+
+nested_funcs()
+
+# datetime.now() #the module also isn't accessible outside the funciton, as the import was done inside the function.
