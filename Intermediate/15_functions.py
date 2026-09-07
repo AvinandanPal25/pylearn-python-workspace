@@ -149,10 +149,12 @@ def calculate_revised_salary(salary):
     else: 
         print("salary not passed.") #but when else block is active, this line is reached.
 
-print(f"Revised salary :- {calculate_revised_salary(75000)}")
-print(f"Revised salary :- {calculate_revised_salary(40000)}") #after this line, global value if updated to 0.2
-print(f"Revised salary :- {calculate_revised_salary(100000)}")
+print(f"Revised salary :- {calculate_revised_salary(75000)}") #salary_hike = 0.1; after this line salary_hike is GLOBAL throughout
+print(f"Revised salary :- {calculate_revised_salary(40000)}") #after this line, global value if updated to 0.2, not a local variable.
+print(f"Revised salary :- {calculate_revised_salary(100000)}") #salary_hike = 0.2
 print(f"Revised salary :- {calculate_revised_salary(None)}")
+
+print(salary_hike) # outside the function as well it is 0.2, because it's Global
 # print(performance_bonus) #not available outside the function block, as it is local to the function
 
 print()
