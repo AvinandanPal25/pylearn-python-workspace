@@ -137,8 +137,71 @@ for n in nums:
 print()
 
 # A higher order function is one that accepts one or more functions as arguments and/or returns a function.. e.g. math_op, get_multiplier
+#------------------------------------------------------------------------------------------------------------------------------------------
+
+# LAMBDA FUNCTION: A compact way of creating a function that has one expression whose result is the function return. It's anonymous
+'''
+lambda x:x**2 
+is a compact way of writting 
+def sqaure(x): 
+    return x**2
+
+lambda with simple conditions:-
+lambda x, y: x if x > y else y
+'''
+print((lambda x:x**2)(4)) #the lambda function should be enclosed within parenthesis... otherwise a lambda OBJECT would be return, not the result of the function
+print((lambda x, y: x if x > y else y)(18,17))
+
+
+result = []
+def process(numbers_list):
+    for x,y in numbers_list: 
+        result.append((lambda x,y: (x+y)*(x-y))(x,y))
+    return result
+
+    # # OR, assign the lambda funct to an identifier and use it
+    # asquare_minus_bsquare = lambda x,y: (x+y)*(x-y)
+    # for x,y in numbers_list: 
+    #     result.append(asquare_minus_bsquare(x,y))
+    # return result
+
+print(process([(4,2), (8,5), (7,10)]))
+
 #-----------------------------------------------
-# LAMBDA FUNCTION:
-
-
 # MAP - FILTER - REDUCE
+
+## Map: applies the same operation to every item of an iterable.
+odd_nums = [1,3,5,7,9]
+print(map(lambda x: x**3, odd_nums)) #returns a map object (an iterator)
+print(list(map(lambda x: x**3, odd_nums)))
+
+# print(list(map(lambda x,y : (x+y)*(x-y), [(4,2), (8,5), (7,10)]))) #--> TypeError: <lambda>() missing 1 required positional argument: 'y'
+# If the lambda requires more than one operands - map throws an error as it expects onlt one ---> we need to use starmap
+from itertools import starmap
+print(list(starmap(lambda x,y : (x+y)*(x-y), [(4,2), (8,5), (7,10)]))) #starmap() effectively unpacks each tuple before passing it to the function
+
+# Or use indexing
+print(list(map(lambda num : (num[0]+num[1])*(num[0]-num[1]), [(4,2), (8,5), (7,10)]))) #--> num is each inner tuple.
+
+
+## Filter: Selects only the items that satisfy a condition in an iterable
+rand_nums = [153, 370, 407, 509, 1092, 1634]
+
+def is_armstrong(num):
+    num_str = str(num)
+    num_digits = len(num_str)
+    total_sum = sum(int(digit) ** num_digits for digit in num_str)
+    return total_sum == num
+
+print(filter(is_armstrong, rand_nums))
+print(list(filter(is_armstrong, rand_nums)))
+
+
+## Reduce: Applies a function cumulatively to the elements of an iterable and returns a single final value
+from functools import reduce
+result = reduce(lambda a, b: a+b, odd_nums) #here between a & b, one is the accumulator, the other is the current item.
+print(result)
+
+a = [5, 9, 3, 12, 7]
+r = reduce(lambda x, y: x if x > y else y, a) #largest number in a
+print(r)
