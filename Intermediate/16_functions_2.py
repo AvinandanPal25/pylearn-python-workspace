@@ -205,3 +205,75 @@ print(result)
 a = [5, 9, 3, 12, 7]
 r = reduce(lambda x, y: x if x > y else y, a) #largest number in a
 print(r)
+print("-"*40)
+
+#-------------------------------------------------------------------------------
+# CLOSURES
+
+def make_counter(start=0):
+    count = start  # Enclosing variable
+    
+    def incr_count():
+        nonlocal count        
+        count += 1
+        return count
+        
+    return incr_count #incr_count func is the closure, it retains its enclosing scope variables
+
+count_from_0 = make_counter() #even if make_counter() is completed, this returned func retains access to the enclosing `count` var. And modifies in subsequent calls.
+ 
+count_from_100 = make_counter(100) #a separate `count` var for a separate closure function object
+
+# but above two are just a closure creation.
+
+print(count_from_0()) #1
+print(count_from_0()) #2 
+
+print(count_from_100()) #101
+print(count_from_100()) #102
+print(count_from_100()) #103 #Multiple closures can have independent state
+print()
+
+#Examples:
+
+def configure_api_client(base_url):
+    def get(endpoint):
+        return f"GET {base_url}/{endpoint}"
+    
+    return get
+
+sports_api = configure_api_client("https://global.sports.com")
+weather_api = configure_api_client("https://weather.com")
+
+'''basically sports_api is -- 
+def get(endpoint):
+  return f"GET "https://global.sports.com"/{endpoint}"
+'''
+
+print(sports_api("sport/cricket")) #sports_api <==> get
+print(weather_api("forecast"))
+print()
+#---------------------------------------------------------------
+
+def make_cleaner(strip=True, lowercase=False, split_char = ""):
+    def clean(value):
+        if strip:
+            value = value.strip()
+        if lowercase:
+            value = value.lower()
+
+        if split_char:
+            value = value.split(split_char)[0]
+        return value
+
+    return clean
+
+clean_name = make_cleaner() #strip, lowercase etc are passed when creating the special `make_cleaner` func
+clean_email = make_cleaner(lowercase=True)
+clean_username = make_cleaner(split_char='@')
+
+#but these arguments are passed to the closure function, that still has info about strip/lowercase set above through make_cleaner
+name = "   Jannik Sinner   "
+email = "  SINNY_JANNIK_atp1@tennis.com"
+p_name, p_email, p_username = clean_name(name), clean_email(email), clean_username(email) 
+print(f"{p_name=}, {p_email=}, {p_username=}")
