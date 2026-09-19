@@ -277,3 +277,23 @@ name = "   Jannik Sinner   "
 email = "  SINNY_JANNIK_atp1@tennis.com"
 p_name, p_email, p_username = clean_name(name), clean_email(email), clean_username(email) 
 print(f"{p_name=}, {p_email=}, {p_username=}")
+
+
+#-------------------------------------------------------------------------------
+# RECURSION: To break a larger problem into repeatable smaller problem, and execute that smaller one's solution directly or indirectly until the base case (the last possible smaller problem) is reached.
+
+def factorial(n):
+    if n <= 1:  #base case
+        return 1
+
+    return n * factorial(n - 1)   #recursive case
+
+#----------------------------
+# How many recursion calls can be done?
+import sys
+
+# View current limit
+print(sys.getrecursionlimit())  # 1000 is the max depth
+
+# To increast it (Only use when really needed)
+sys.setrecursionlimit(2000)
