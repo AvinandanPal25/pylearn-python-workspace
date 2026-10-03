@@ -111,10 +111,11 @@ print(demo())
 for x in demo():
     print(x) # On the third next(), the generator executes return 30, 
              # which terminates the generator by raising StopIteration whose value is 30. 
-             # Since for handles StopIteration automatically, 30 isn't exposed by the loop.
+             # Since `for` handles StopIteration automatically, 30 isn't exposed by the loop.
 print()
 
-# yield from :- this can be used to yield values from another generator.
+
+# yield from :- this can be used to yield values from another generator/ an iterable
 def subprocess(n):
     x = 0
     while x<n: 
@@ -122,11 +123,32 @@ def subprocess(n):
         x+=1
 
 def main_process(n):
-    yield from subprocess(n)
+    yield from subprocess(n) #yields items one by one from another generator
 
 print(list(main_process(10)))
 print()
 
+def yield_from_example():
+    yield from [1, 2, 3]  # Loops and yields items from an iterator: 1 --> 2 --> 3
+    yield 4
+
+for item in yield_from_example():
+    print(item)
+
+'''
+Output:
+1
+2
+3
+4
+
+Instead, if yield is used in line #132 (i.e. yield [1,2,3]) --> output would be
+[1,2,3]
+4
+'''
+print()
+
+#-----------------------------------------------------------
 # The generator has its own local namespace.
 s = subprocess(5)
 print(next(s)) #x=0 
@@ -135,7 +157,7 @@ x = 10
 print(next(s)) #x from inside the generator func is still 1, which is incremented to 2, x=2 is yieled.
 print()
 
-#-----------------------------------------------------------
+#----------------------------
 # but a mutable object can be modified.
 def subprocess_2(n):
     x = 0
@@ -187,5 +209,148 @@ def main():
 main()
 
 #--------------------------------------------------------------------------------
+# Generator Pipeline:
+# `yield from` was implicitly working in a loop, and yielding from another generator or iterator.
+# But here we are running a generator, every time another generator yield a value --> a pipeline of sort.
 
+def numbers():
+    for i in range(5):
+        yield i
+
+
+def log_generator(gen):
+    for value in gen:
+        print("Produced:", value)
+        yield value
+
+g = numbers()
+
+for x in log_generator(g):
+    print("Consumer got:", x) # if the yield value line was not used, this line would have never executed as the loop on gen would have exhausted itself.
+
+'''by using that yield, the value is yielded and sent back out of the loop, inside the loop on log_generator.... 
+and prints `consumer got`; and then the for loop would have gone inside the `for value in gen loop` again, 
+and executed the 2nd iteration.
+The yield is essentially the handoff point.'''
+
+
+
+
+
+
+#--------------------------------------------------------------------------------
 # REAL WORLD USAGE OF GENERATOR:
+## Usecase: There is a potentially large or ongoing source of data, and I don't need all of it at once. -> Use generators
+
+'''Ex. 1: Suppose you have a 20 GB log file.
+data = file.read() is not efficient cause it asks Python to load a huge size of data.
+Using Generators and yield functionality, we never need 20GB of memory.
+'''
+
+def strip_n_transform_line(line):
+    pass 
+
+def read_lines(filename):
+    with open(filename) as f:
+        for line in f:
+            yield line
+
+for line in read_lines("server.log"):
+    strip_n_transform_line(line) 
+
+
+'''Ex. 2: Data-processing pipelines.
+Using Generators we can build a broad pipeline (similar to what was demonstrated earlier).
+Instead of do all the operators one after the other, and thereby use up memory, using pipelined-generators... 
+one single record can be completed, and then continue with the next one.
+'''
+def read_records():
+    pass
+def valid(rec):
+    pass
+def normalize(rec):
+    pass
+def make_features(rec):
+    pass
+def load_data(rec):
+    pass
+
+def clean(records):
+    for record in records:
+        if valid(record):
+            yield normalize(record)
+
+def extract_features(records):
+    for record in records:
+        yield make_features(record)
+
+records = read_records()
+cleaned = clean(records) #records is a generator, not data yet.
+features = extract_features(cleaned) #cleaned is also a generator, and has no data yet.
+
+for row in features: #here extract_features starts, and calls for data from cleaned, 
+                     #which then calls data from clean, which fetches from read_records. 
+                     #The normalized value is yielded, and is received by extract_features, 
+                     #which yields data using make_features func. And then the next loops starts.
+    load_data(row)
+
+
+'''EX. 3: API Handling.
+Suppose an API gives you data when you request it with request params and page no.
+Now, if we do it without generators, we might use a loop to iterate over a page index, and capture all data into one list or dictionary.
+And at the end of that loop is that we would have the whole data.
+Using Generators, we can get the data and process it for one set of row at a time, without needing to store the value somewhere.'''
+
+def prepare_report(customer):
+    pass
+
+def send_email(report):
+    pass
+
+#without generators ---
+all_customers = []
+pages = range(1,1001)
+import requests
+for page in pages:
+    response = requests.get(
+            "https://api.example.com/customers",
+            params={"page": page, "limit": 100}
+        )
+    data = response.json()["data"]
+    if not data:
+        print(f"No response received for page-{page}!")
+        continue
+
+    all_customers.extend(data)  #data of 1000 pages
+
+for cust in all_customers: #a loop of maybe million/billion customer in 1000 pages.
+    cust_report = prepare_report(cust)
+    send_email(cust_report)
+
+#usage of generators ---
+def get_customers():
+    page = 1
+
+    while True:
+        response = requests.get(
+            "https://api.example.com/customers",
+            params={"page": page, "limit": 100}
+        )
+
+        data = response.json()["data"]
+        if not data:
+            print(f"No response received for page-{page}!")
+            continue
+
+        for customer in data:
+            yield customer
+
+        page += 1
+
+for customer in get_customers():
+    cust_report = prepare_report(cust)
+    send_email(cust_report)
+
+#==============================================================================================================================================================================================================
+# NB: If we need the whole data at once, generators isn't required. But if we want to process something per data, we can use generator and process that once, and move to the next one.
+    # Especially when: result sets are large, API pagination is involved, processing is expensive, you can process records independently, OR you want to start processing before the entire data arrives.
